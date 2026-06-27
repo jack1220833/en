@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🌈 英语启蒙乐园</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', cursive;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            overflow-x: hidden;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 漂浮的装饰元素 */
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .floating-item {
+            position: absolute;
+            font-size: 30px;
+            opacity: 0.6;
+            animation: floatUp 20s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 头部区域 */
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-size: 60px;
+            margin-bottom: 10px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: white;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 气球动画 */
+        .balloons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .balloon {
+            font-size: 40px;
+            animation: balloonFloat 3s ease-in-out infinite;
+        }
+
+        .balloon:nth-child(1) { animation-delay: 0s; }
+        .balloon:nth-child(2) { animation-delay: 0.5s; }
+        .balloon:nth-child(3) { animation-delay: 1s; }
+
+        @keyframes balloonFloat {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* 卡片网格 */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            padding: 25px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+            opacity: 0;
+            animation: cardFadeIn 0.6s ease-out forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes cardFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover::before,
+        .card:active::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .card:active {
+            transform: translateY(-4px) scale(0.98);
+        }
+
+        .card-emoji {
+            font-size: 50px;
+            margin-bottom: 12px;
+            display: block;
+            animation: emojiWiggle 3s ease-in-out infinite;
+        }
+
+        .card:nth-child(1) .card-emoji { animation-delay: 0s; }
+        .card:nth-child(2) .card-emoji { animation-delay: 0.3s; }
+        .card:nth-child(3) .card-emoji { animation-delay: 0.6s; }
+        .card:nth-child(4) .card-emoji { animation-delay: 0.9s; }
+        .card:nth-child(5) .card-emoji { animation-delay: 1.2s; }
+
+        @keyframes emojiWiggle {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-5deg) scale(1.05); }
+            75% { transform: rotate(5deg) scale(1.05); }
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* 进度条（可选样式） */
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #eee;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.5s ease;
+        }
+
+        /* 品牌落款 */
+        .footer {
+            text-align: center;
+            padding: 40px 20px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.8s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .footer-brand {
+            font-weight: bold;
+            color: #222;
+            font-size: 1rem;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        /* 星星装饰 */
+        .stars {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            animation: twinkle 1.5s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .card {
+                padding: 20px 15px;
+            }
+
+            .card-emoji {
+                font-size: 40px;
+            }
+
+            .card-title {
+                font-size: 1rem;
+            }
+
+            .card-desc {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* 点击涟漪效果 */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.4);
+            transform: scale(0);
+            animation: rippleEffect 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 漂浮装饰元素 -->
+    <div class="floating-elements" id="floatingElements"></div>
+
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="logo">🎓</div>
+            <h1>🌈 英语启蒙乐园</h1>
+            <p class="subtitle">快乐学英语，从字母开始！</p>
+            <div class="balloons">
+                <span class="balloon">🎈</span>
+                <span class="balloon">🎈</span>
+                <span class="balloon">🎈</span>
+            </div>
+        </header>
+
+        <!-- 学习模块卡片 -->
+        <div class="cards-grid">
+            <a href="letter.html" class="card">
+                <span class="card-emoji">📝</span>
+                <div class="card-title">字母乐园</div>
+                <div class="card-desc">认识26个英文字母<br>大小写配对、听音辨字</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+            </a>
+
+            <a href="animal.html" class="card">
+                <span class="card-emoji">🐾</span>
+                <div class="card-title">动物单词</div>
+                <div class="card-desc">认识可爱的<br>动物朋友们</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+            </a>
+
+            <a href="fruit.html" class="card">
+                <span class="card-emoji">🍎</span>
+                <div class="card-title">水果单词</div>
+                <div class="card-desc">好吃的水果<br>英文名</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+            </a>
+
+            <a href="color.html" class="card">
+                <span class="card-emoji">🎨</span>
+                <div class="card-title">颜色单词</div>
+                <div class="card-desc">五彩缤纷的<br>颜色世界</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+            </a>
+
+            <a href="number.html" class="card">
+                <span class="card-emoji">🔢</span>
+                <div class="card-title">数字单词</div>
+                <div class="card-desc">从1到20的<br>数字挑战</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+            </a>
+        </div>
+
+        <!-- 品牌落款 -->
+        <footer class="footer">
+            <p class="footer-brand">清班数学组小同学们研制</p>
+            <p class="footer-brand" style="margin-top: 5px;">制作：虹虹姐，刚子，Tony，雨香屁</p>
+        </footer>
+    </div>
+
+    <script>
+        // 创建漂浮的装饰元素
+        function createFloatingElements() {
+            const container = document.getElementById('floatingElements');
+            const floatingItems = ['⭐', '✨', '🌟', '💫', '🎵', '🎶', '🌸', '💜'];
+            
+            for (let i = 0; i < 15; i++) {
+                const item = document.createElement('span');
+                item.className = 'floating-item';
+                item.textContent = floatingItems[Math.floor(Math.random() * floatingItems.length)];
+                item.style.left = Math.random() * 100 + '%';
+                item.style.animationDelay = Math.random() * 20 + 's';
+                item.style.animationDuration = (15 + Math.random() * 10) + 's';
+                item.style.fontSize = (20 + Math.random() * 20) + 'px';
+                container.appendChild(item);
+            }
+        }
+
+        // 点击涟漪效果
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = e.clientX - rect.left - size / 2 + 'px';
+                ripple.style.top = e.clientY - rect.top - size / 2 + 'px';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // 初始化
+        createFloatingElements();
+
+        // 页面可见性变化时重新生成漂浮元素
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                const container = document.getElementById('floatingElements');
+                container.innerHTML = '';
+                createFloatingElements();
+            }
+        });
+    </script>
+</body>
+</html>
