@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>衣服鞋帽 - 英语启蒙</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:15px;color:#333}
+.container{max-width:480px;margin:0 auto}
+.card{background:white;border-radius:20px;padding:20px;margin-bottom:15px;box-shadow:0 8px 25px rgba(0,0,0,0.1)}
+h1{text-align:center;color:#fff;font-size:24px;margin-bottom:15px;text-shadow:0 2px 4px rgba(0,0,0,0.2)}
+h2{color:#667eea;margin-bottom:10px;font-size:18px}
+.btn{display:block;width:100%;padding:15px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.3s;margin-bottom:10px}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:white}
+.btn-mode{background:linear-gradient(135deg,#f093fb,#f5576c);color:white;text-align:left;padding-left:20px}
+.btn-mode.boss{background:linear-gradient(135deg,#fa709a,#fee140)}
+.btn-back{background:#e0e0e0;color:#666}
+.btn-answer{background:white;border:2px solid #ddd;color:#333;font-size:20px;padding:20px;text-align:center}
+.btn-answer.correct{background:#4CAF50;color:white;border-color:#4CAF50}
+.btn-answer.wrong{background:#f44336;color:white;border-color:#f44336}
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}
+.btn-small{padding:10px;font-size:14px}
+.hidden{display:none}
+.score-bar{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.2);border-radius:10px;padding:10px 15px;color:white;margin-bottom:15px;font-size:14px}
+.question-area{text-align:center;padding:20px 0}
+.question-letter{font-size:72px;font-weight:bold;color:#667eea;margin:10px 0}
+.question-emoji{font-size:80px;margin:10px 0}
+.question-text{font-size:18px;color:#666;margin:10px 0}
+.listen-btn{background:linear-gradient(135deg,#4facfe,#00f2fe);color:white;border:none;border-radius:50%;width:80px;height:80px;font-size:36px;cursor:pointer;margin:10px auto;display:block}
+.feedback{text-align:center;font-size:24px;font-weight:bold;margin:15px 0;min-height:40px}
+.feedback.correct{color:#4CAF50}
+.feedback.wrong{color:#f44336}
+.mode-tag{display:inline-block;background:rgba(255,255,255,0.3);padding:3px 10px;border-radius:10px;font-size:12px;margin-left:5px}
+input{width:100%;padding:12px;border:2px solid #ddd;border-radius:10px;font-size:16px;margin-bottom:10px}
+input:focus{border-color:#667eea;outline:none}
+.label{font-size:14px;color:#666;margin-bottom:5px}
+.tabs{display:flex;gap:5px;margin-bottom:15px}
+.tab{flex:1;padding:10px;text-align:center;background:rgba(255,255,255,0.2);color:white;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500}
+.tab.active{background:white;color:#667eea}
+.rank-list{list-style:none}
+.rank-item{display:flex;align-items:center;padding:10px;border-bottom:1px solid #eee}
+.rank-item:last-child{border-bottom:none}
+.rank-num{width:30px;font-weight:bold;color:#667eea;font-size:18px}
+.rank-name{flex:1;font-size:15px}
+.rank-score{font-weight:bold;color:#4CAF50}
+.tts-status{font-size:12px;text-align:center;padding:5px;border-radius:8px;margin-bottom:10px}
+.tts-ok{background:#e8f5e9;color:#2e7d32}
+.tts-no{background:#fff3e0;color:#e65100}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal-content{background:white;border-radius:20px;padding:25px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto}
+.modal-title{font-size:20px;font-weight:bold;text-align:center;margin-bottom:20px;color:#333}
+.brand-footer{text-align:center;padding:20px;color:#000;font-weight:bold;font-size:14px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>👕 衣服鞋帽</h1>
+
+<!-- 登录页 -->
+<div id="login-page" class="card">
+<div class="tabs">
+<div class="tab active" onclick="switchTab(1)">登录</div>
+<div class="tab" onclick="switchTab(2)">注册</div>
+</div>
+<div id="tab-login">
+<input id="login-phone" placeholder="用户名或手机号">
+<input id="login-pwd" type="password" placeholder="密码">
+<button class="btn btn-primary" onclick="doLogin()">登录</button>
+</div>
+<div id="tab-register" class="hidden">
+<input id="reg-name" placeholder="昵称">
+<input id="reg-phone" placeholder="手机号">
+<input id="reg-pwd" type="password" placeholder="密码">
+<button class="btn btn-primary" onclick="doRegister()">注册</button>
+</div>
+<p id="login-msg" style="text-align:center;color:#f44336;font-size:13px;margin-top:10px"></p>
+</div>
+
+<!-- 主页 -->
+<div id="home-page" class="hidden">
+<div class="score-bar">
+<span>👋 <span id="user-name"></span></span>
+<span id="tts-badge"></span>
+<button class="btn btn-small btn-back" onclick="doLogout()" style="width:auto;padding:5px 12px;margin:0">退出</button>
+</div>
+
+<div id="tts-status" class="tts-status"></div>
+
+<div class="card">
+<h2>选择模式</h2>
+<button class="btn btn-mode" onclick="selectMode(1)">🖼️ 模式一：看图选单词<br><small style="opacity:0.8">看emoji，选英文单词</small></button>
+<button class="btn btn-mode" onclick="selectMode(2)">🔊 模式二：听音选图<br><small style="opacity:0.8">听发音，选对应emoji</small></button>
+<button class="btn btn-mode" onclick="selectMode(3)">📝 模式三：看中文选英文<br><small style="opacity:0.8">看中文意思，选英文单词</small></button>
+<button class="btn btn-mode boss" onclick="selectMode(4)">👹 挑战大魔王<br><small style="opacity:0.8">三种题型混合挑战！</small></button>
+</div>
+
+<div class="card">
+<h2>🏆 排行榜</h2>
+<ul id="rank-list" class="rank-list"><li style="text-align:center;color:#999;padding:20px">加载中...</li></ul>
+</div>
+
+<div class="brand-footer">
+清班数学组小同学们研制<br>制作：虹虹姐，刚子，Tony，雨香屁
+</div>
+</div>
+
+<!-- 游戏页 -->
+<div id="game-page" class="hidden">
+<div class="score-bar">
+<span id="mode-label">模式</span>
+<span>✅<span id="score-correct">0</span> ❌<span id="score-wrong">0</span></span>
+<button class="btn btn-small btn-back" onclick="goHome()" style="width:auto;padding:5px 12px;margin:0">🏠 首页</button>
+</div>
+
+<div class="card">
+<div class="question-area">
+<div id="question-text" class="question-text"></div>
+<div id="question-display"></div>
+<button id="listen-btn" class="listen-btn hidden" onclick="replayAudio()">🔊</button>
+</div>
+<div id="feedback" class="feedback"></div>
+<div id="answers" class="btn-grid"></div>
+</div>
+</div>
+</div>
+
+<!-- 登录提示弹窗 -->
+<div id="login-modal" class="modal-overlay hidden">
+<div class="modal-content">
+<h3 class="modal-title">🎉 免费体验结束</h3>
+<p style="text-align:center;color:#333;font-size:15px;margin-bottom:20px;line-height:1.6">您已体验5题，登录后可无限畅玩并参与排行榜！</p>
+<button class="btn btn-primary" onclick="showLoginFromModal()">立即登录</button>
+<button class="btn btn-back" onclick="hideLoginModal()" style="margin-top:10px">稍后再说</button>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// ============ 配置 ============
+const SUPABASE_URL = 'https://iigckwcdwclmekyxsvbj.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_AWxSEp2mc9X5FXD9y7sFjA_9GY19yrJ';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ============ 衣服鞋帽词汇数据（12个） ============
+const CLOTHING_WORDS = [
+  {word:'Shirt', chinese:'衬衫', emoji:'👔'},
+  {word:'Pants', chinese:'裤子', emoji:'👖'},
+  {word:'Dress', chinese:'裙子', emoji:'👗'},
+  {word:'Shoes', chinese:'鞋子', emoji:'👟'},
+  {word:'Hat', chinese:'帽子', emoji:'🧢'},
+  {word:'Socks', chinese:'袜子', emoji:'🧦'},
+  {word:'Coat', chinese:'外套', emoji:'🧥'},
+  {word:'Shorts', chinese:'短裤', emoji:'🩳'},
+  {word:'Boots', chinese:'靴子', emoji:'🥾'},
+  {word:'Scarf', chinese:'围巾', emoji:'🧣'},
+  {word:'Gloves', chinese:'手套', emoji:'🧤'},
+  {word:'Glasses', chinese:'眼镜', emoji:'👓'}
+];
+
+// ============ 全局状态 ============
+let currentUser = null;
+let currentMode = 0;
+let currentQuestionType = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let ttsSupported = true;
+let currentCorrectWord = null;
+
+// ============ 游客模式检查 ============
+function checkGuestLimit() {
+    if (currentUser) return false;
+    const count = parseInt(localStorage.getItem('guest_question_count_clothing') || '0');
+    if (count >= 5) {
+        showLoginModal();
+        return true;
+    }
+    return false;
+}
+
+function incrementGuestCount() {
+    if (currentUser) return;
+    const count = parseInt(localStorage.getItem('guest_question_count_clothing') || '0');
+    localStorage.setItem('guest_question_count_clothing', (count + 1).toString());
+}
+
+// ============ TTS检测 ============
+function checkTTS() {
+    const hasSpeech = 'speechSynthesis' in window;
+    ttsSupported = hasSpeech;
+    
+    const badge = document.getElementById('tts-badge');
+    const status = document.getElementById('tts-status');
+    
+    if (ttsSupported) {
+        badge.textContent = '🔊 语音已开启';
+        if (status) {
+            status.className = 'tts-status tts-ok';
+            status.textContent = '✅ 语音播放已开启';
+            setTimeout(() => { if (status) status.style.display = 'none'; }, 3000);
+        }
+    } else {
+        badge.textContent = '🔇 文字模式';
+        if (status) {
+            status.className = 'tts-status tts-no';
+            status.innerHTML = '⚠️ 当前浏览器不支持语音<br>听音模式将变为看题模式';
+        }
+    }
+    return ttsSupported;
+}
+
+if ('speechSynthesis' in window) {
+    speechSynthesis.getVoices();
+    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+}
+
+// ============ 语音播放 ============
+function speak(text) {
+    if (!ttsSupported) {
+        const display = document.getElementById('question-display');
+        display.innerHTML = `<div style="font-size:28px;color:#667eea;font-weight:bold;margin:10px 0">${text}</div>`;
+        return;
+    }
+    
+    try {
+        speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'en-US';
+        u.rate = 0.8;
+        u.pitch = 1.1;
+        u.text = 'The word ' + text;
+        speechSynthesis.speak(u);
+    } catch(e) {
+        console.log('语音播放失败:', e);
+    }
+}
+
+// ============ 登录注册 ============
+function switchTab(n) {
+    document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===n-1));
+    document.getElementById('tab-login').classList.toggle('hidden', n!==1);
+    document.getElementById('tab-register').classList.toggle('hidden', n!==2);
+    document.getElementById('login-msg').textContent = '';
+}
+
+async function doLogin() {
+    const account = document.getElementById('login-phone').value.trim();
+    const pwd = document.getElementById('login-pwd').value;
+    const msg = document.getElementById('login-msg');
+    msg.textContent = '';
+    
+    if (!account || !pwd) { msg.textContent = '请填写完整'; return; }
+    
+    try {
+        let { data, error } = await db.from('players').select('*').eq('username', account).limit(1);
+        if (error) throw error;
+        if (!data || data.length === 0) {
+            const res2 = await db.from('players').select('*').eq('phone', account).limit(1);
+            data = res2.data;
+            if (res2.error) throw res2.error;
+        }
+        if (!data || data.length === 0) {
+            msg.textContent = '用户不存在，请先注册';
+            return;
+        }
+        if (data[0].password !== pwd) {
+            msg.textContent = '密码错误，请重试';
+            return;
+        }
+        currentUser = data[0];
+        localStorage.setItem('user_info', JSON.stringify({
+            username: currentUser.username,
+            phone: currentUser.phone,
+            player_id: currentUser.id
+        }));
+        hideLoginModal();
+        enterHome();
+    } catch(e) {
+        msg.textContent = '登录失败: ' + e.message;
+    }
+}
+
+async function doRegister() {
+    const name = document.getElementById('reg-name').value.trim();
+    const phone = document.getElementById('reg-phone').value.trim();
+    const pwd = document.getElementById('reg-pwd').value;
+    const msg = document.getElementById('login-msg');
+    msg.textContent = '';
+    
+    if (!name || !phone || !pwd) { msg.textContent = '请填写完整'; return; }
+    
+    try {
+        const { data: phoneExist } = await db.from('players').select('id').eq('phone', phone).limit(1);
+        if (phoneExist && phoneExist.length > 0) {
+            msg.textContent = '该手机号已注册，请直接登录';
+            return;
+        }
+        
+        const { data: nameExist } = await db.from('players').select('id').eq('username', name).limit(1);
+        if (nameExist && nameExist.length > 0) {
+            msg.textContent = '该用户名已被使用，请更换';
+            return;
+        }
+        
+        const { data, error } = await db.from('players').insert({
+            username: name,
+            phone: phone,
+            password: pwd,
+            grade: null,
+            vip_expire: null
+        }).select().single();
+        
+        if (error) throw error;
+        currentUser = data;
+        localStorage.setItem('user_info', JSON.stringify({
+            username: currentUser.username,
+            phone: currentUser.phone,
+            player_id: currentUser.id
+        }));
+        msg.style.color = '#4CAF50';
+        msg.textContent = '注册成功！';
+        setTimeout(() => { msg.style.color = '#f44336'; enterHome(); }, 500);
+    } catch(e) {
+        msg.textContent = '注册失败: ' + e.message;
+    }
+}
+
+function doLogout() {
+    currentUser = null;
+    localStorage.removeItem('user_info');
+    document.getElementById('home-page').classList.add('hidden');
+    document.getElementById('game-page').classList.add('hidden');
+    document.getElementById('login-page').classList.remove('hidden');
+}
+
+function enterHome() {
+    document.getElementById('login-page').classList.add('hidden');
+    document.getElementById('home-page').classList.remove('hidden');
+    document.getElementById('user-name').textContent = currentUser ? currentUser.username : '游客';
+    checkTTS();
+    loadRanking();
+}
+
+// ============ Modal弹窗控制 ============
+function showLoginModal() {
+    document.getElementById('login-modal').classList.remove('hidden');
+}
+
+function hideLoginModal() {
+    document.getElementById('login-modal').classList.add('hidden');
+}
+
+function showLoginFromModal() {
+    hideLoginModal();
+    document.getElementById('home-page').classList.add('hidden');
+    document.getElementById('game-page').classList.add('hidden');
+    document.getElementById('login-page').classList.remove('hidden');
+}
+
+// ============ 模式选择 ============
+function selectMode(mode) {
+    currentMode = mode;
+    correctCount = 0;
+    wrongCount = 0;
+    
+    const modeNames = {
+        1: '🖼️ 看图选单词',
+        2: '🔊 听音选图',
+        3: '📝 看中文选英文',
+        4: '👹 挑战大魔王'
+    };
+    document.getElementById('mode-label').textContent = modeNames[mode];
+    
+    document.getElementById('home-page').classList.add('hidden');
+    document.getElementById('game-page').classList.remove('hidden');
+    document.getElementById('score-correct').textContent = '0';
+    document.getElementById('score-wrong').textContent = '0';
+    
+    nextQuestion();
+}
+
+// ============ 核心游戏逻辑 ============
+function nextQuestion() {
+    if (checkGuestLimit()) return;
+    
+    if (currentMode === 4) {
+        currentQuestionType = Math.floor(Math.random() * 3) + 1;
+    } else {
+        currentQuestionType = currentMode;
+    }
+    
+    const correct = CLOTHING_WORDS[Math.floor(Math.random() * CLOTHING_WORDS.length)];
+    currentCorrectWord = correct;
+    
+    const questionText = document.getElementById('question-text');
+    const questionDisplay = document.getElementById('question-display');
+    const listenBtn = document.getElementById('listen-btn');
+    const feedback = document.getElementById('feedback');
+    
+    feedback.textContent = '';
+    feedback.className = 'feedback';
+    questionDisplay.innerHTML = '';
+    listenBtn.classList.add('hidden');
+    
+    if (currentQuestionType === 1) {
+        // === 看图选单词 ===
+        questionText.textContent = '这是什么衣服/配饰？';
+        questionDisplay.innerHTML = `<div class="question-emoji">${correct.emoji}</div>`;
+        generateWordOptions(correct, 'word');
+        
+    } else if (currentQuestionType === 2) {
+        // === 听音选图 ===
+        questionText.textContent = '听一听，选出对应的衣服';
+        questionDisplay.innerHTML = '';
+        listenBtn.classList.remove('hidden');
+        speak(correct.word, 'word');
+        generateWordOptions(correct, 'emoji');
+        
+    } else {
+        // === 看中文选英文 ===
+        questionText.textContent = `选择 "${correct.chinese}" 的英文单词`;
+        questionDisplay.innerHTML = `<div style="font-size:22px;color:#667eea;font-weight:bold">${correct.chinese}</div>`;
+        speak(correct.word, 'word');
+        generateWordOptions(correct, 'word');
+    }
+}
+
+// ============ 生成选项 ============
+function generateWordOptions(correct, answerType) {
+    const answers = document.getElementById('answers');
+    answers.innerHTML = '';
+    
+    let correctAnswer = answerType === 'word' ? correct.word : correct.emoji;
+    
+    let options = [correctAnswer];
+    while (options.length < 4) {
+        const rand = CLOTHING_WORDS[Math.floor(Math.random() * CLOTHING_WORDS.length)];
+        let opt = answerType === 'word' ? rand.word : rand.emoji;
+        if (!options.includes(opt)) options.push(opt);
+    }
+    
+    options.sort(() => Math.random() - 0.5);
+    
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-answer';
+        if (answerType === 'emoji') {
+            btn.style.fontSize = '36px';
+        }
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(opt, correctAnswer, btn);
+        answers.appendChild(btn);
+    });
+}
+
+// ============ 答题判定 ============
+async function checkAnswer(selected, correct, btn) {
+    const feedback = document.getElementById('feedback');
+    const buttons = document.querySelectorAll('.btn-answer');
+    buttons.forEach(b => b.onclick = null);
+    
+    const isCorrect = selected === correct;
+    
+    if (isCorrect) {
+        btn.classList.add('correct');
+        feedback.textContent = '✅ 太棒了！';
+        feedback.className = 'feedback correct';
+        correctCount++;
+        if (ttsSupported) {
+            const u = new SpeechSynthesisUtterance('Great!');
+            u.lang = 'en-US';
+            u.rate = 1;
+            speechSynthesis.speak(u);
+        }
+    } else {
+        btn.classList.add('wrong');
+        feedback.textContent = `❌ 正确答案是 ${correct}`;
+        feedback.className = 'feedback wrong';
+        wrongCount++;
+        
+        buttons.forEach(b => {
+            if (b.textContent === correct) b.classList.add('correct');
+        });
+    }
+    
+    document.getElementById('score-correct').textContent = correctCount;
+    document.getElementById('score-wrong').textContent = wrongCount;
+    
+    incrementGuestCount();
+    saveRecord(currentQuestionType, isCorrect);
+    
+    setTimeout(() => nextQuestion(), isCorrect ? 1200 : 2500);
+}
+
+// ============ 重播语音 ============
+function replayAudio() {
+    if (!currentCorrectWord) return;
+    speak(currentCorrectWord.word, 'word');
+}
+
+// ============ 保存记录 ============
+async function saveRecord(gameType, isCorrect) {
+    if (!currentUser) return;
+    try {
+        await db.from('records').insert({
+            player_id: currentUser.id,
+            game_type: '衣服鞋帽-模式' + gameType,
+            module: 5,
+            scenario: 0,
+            is_correct: isCorrect,
+            time_spent: 0
+        });
+        
+        const { data: lb } = await db.from('leaderboard').select('*').eq('player_id', currentUser.id).limit(1);
+        
+        if (lb && lb.length > 0) {
+            const update = {
+                total_correct: lb[0].total_correct + (isCorrect ? 1 : 0),
+                total_wrong: lb[0].total_wrong + (isCorrect ? 0 : 1),
+                week_correct: lb[0].week_correct + (isCorrect ? 1 : 0),
+                last_active: new Date().toISOString()
+            };
+            await db.from('leaderboard').update(update).eq('player_id', currentUser.id);
+        } else {
+            await db.from('leaderboard').insert({
+                player_id: currentUser.id,
+                total_correct: isCorrect ? 1 : 0,
+                total_wrong: isCorrect ? 0 : 1,
+                week_correct: isCorrect ? 1 : 0
+            });
+        }
+    } catch(e) {
+        console.log('保存记录失败:', e);
+    }
+}
+
+// ============ 排行榜 ============
+async function loadRanking() {
+    try {
+        const { data, error } = await db.from('leaderboard')
+            .select(`total_correct, players!inner(username)`)
+            .order('total_correct', { ascending: false })
+            .limit(10);
+        
+        const list = document.getElementById('rank-list');
+        
+        if (error) {
+            list.innerHTML = '<li style="text-align:center;color:#999;padding:20px">暂无排行</li>';
+            return;
+        }
+        
+        if (!data || data.length === 0) {
+            list.innerHTML = '<li style="text-align:center;color:#999;padding:20px">还没有记录，快来争第一！</li>';
+            return;
+        }
+        
+        list.innerHTML = data.map((item, i) => {
+            const medals = ['🥇','🥈','🥉'];
+            const medal = medals[i] || (i+1);
+            return `<li class="rank-item"><span class="rank-num">${medal}</span><span class="rank-name">${item.players?.username || '匿名'}</span><span class="rank-score">✅ ${item.total_correct}</span></li>`;
+        }).join('');
+    } catch(e) {
+        console.log('加载排行榜失败:', e);
+        document.getElementById('rank-list').innerHTML = '<li style="text-align:center;color:#999;padding:20px">暂无排行</li>';
+    }
+}
+
+// ============ 返回 ============
+function goHome() {
+    document.getElementById('game-page').classList.add('hidden');
+    document.getElementById('home-page').classList.remove('hidden');
+    speechSynthesis.cancel();
+    loadRanking();
+}
+
+// 初始化
+window.addEventListener('load', () => {
+    const savedUser = localStorage.getItem('user_info');
+    if (savedUser) {
+        try {
+            const userInfo = JSON.parse(savedUser);
+            currentUser = {
+                username: userInfo.username,
+                phone: userInfo.phone,
+                id: userInfo.player_id
+            };
+            enterHome();
+        } catch(e) {
+            console.log('读取用户信息失败:', e);
+        }
+    } else {
+        checkTTS();
+    }
+});
+
+checkTTS();
+</script>
+</body>
+</html>

@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🌈 英语启蒙乐园</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', cursive;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+            padding-bottom: 100px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* 标题区域 */
+        .header {
+            text-align: center;
+            padding: 20px 20px 30px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: white;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .header-emoji {
+            font-size: 50px;
+            display: block;
+            margin-bottom: 10px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* 右上角登录区域 */
+        .login-area {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+        }
+
+        .login-btn {
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-size: 1rem;
+            color: #764ba2;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 15px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-nickname {
+            color: #764ba2;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .logout-btn {
+            background: #ff6b6b;
+            border: none;
+            border-radius: 20px;
+            padding: 5px 15px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+
+        /* Modal弹窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: #f5f5f5;
+            padding: 5px;
+            border-radius: 12px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: #764ba2;
+            color: white;
+            box-shadow: 0 4px 10px rgba(118, 75, 162, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #aaa;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(118, 75, 162, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(118, 75, 162, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        .form-panel {
+            display: none;
+        }
+
+        .form-panel.active {
+            display: block;
+        }
+
+        /* 分组区域 */
+        .group-section {
+            margin-bottom: 35px;
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .group-section:nth-child(1) { animation-delay: 0.1s; }
+        .group-section:nth-child(2) { animation-delay: 0.2s; }
+        .group-section:nth-child(3) { animation-delay: 0.3s; }
+        .group-section:nth-child(4) { animation-delay: 0.4s; }
+
+        .group-title {
+            font-size: 1.4rem;
+            color: white;
+            margin-bottom: 18px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cards-scroll {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 15px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .cards-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .cards-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        .cards-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 3px;
+        }
+
+        .card {
+            flex: 0 0 calc(50% - 8px);
+            min-width: 150px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+            scroll-snap-align: start;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: cardFadeIn 0.6s ease-out forwards;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes cardFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover::before,
+        .card:active::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+        }
+
+        .card:active {
+            transform: translateY(-3px) scale(0.98);
+        }
+
+        .card-emoji {
+            font-size: 45px;
+            margin-bottom: 10px;
+            display: block;
+            animation: emojiWiggle 2.5s ease-in-out infinite;
+        }
+
+        .card:nth-child(1) .card-emoji { animation-delay: 0s; }
+        .card:nth-child(2) .card-emoji { animation-delay: 0.3s; }
+        .card:nth-child(3) .card-emoji { animation-delay: 0.6s; }
+
+        @keyframes emojiWiggle {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-8deg) scale(1.08); }
+            75% { transform: rotate(8deg) scale(1.08); }
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .card-desc {
+            font-size: 0.8rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* 品牌落款 */
+        .footer {
+            text-align: center;
+            padding: 40px 20px 20px;
+            margin-top: 30px;
+        }
+
+        .footer-brand {
+            color: #222;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-makers {
+            color: #222;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 15px;
+                min-width: 140px;
+            }
+
+            .card-emoji {
+                font-size: 38px;
+            }
+
+            .card-title {
+                font-size: 1rem;
+            }
+
+            .card-desc {
+                font-size: 0.75rem;
+            }
+
+            .group-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .card {
+                flex: 0 0 calc(33.333% - 10px);
+            }
+        }
+
+        /* 即将上线提示 */
+        .coming-soon-toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            z-index: 3000;
+            font-size: 1.1rem;
+            display: none;
+            animation: toastFadeIn 0.3s ease;
+        }
+
+        .coming-soon-toast.active {
+            display: block;
+        }
+
+        @keyframes toastFadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 标题区域 -->
+        <header class="header">
+            <span class="header-emoji">🎓</span>
+            <h1>🌈 英语启蒙乐园</h1>
+        </header>
+
+        <!-- 登录区域 -->
+        <div class="login-area" id="loginArea">
+            <!-- 动态填充 -->
+        </div>
+
+        <!-- 学习模块分组 -->
+        <!-- 基础认知 -->
+        <div class="group-section">
+            <h2 class="group-title">📖 基础认知</h2>
+            <div class="cards-scroll">
+                <a href="letter.html" class="card">
+                    <span class="card-emoji">📝</span>
+                    <div class="card-title">字母乐园</div>
+                    <div class="card-desc">认识26个英文字母</div>
+                </a>
+                <a href="number.html" class="card">
+                    <span class="card-emoji">🔢</span>
+                    <div class="card-title">数字乐园</div>
+                    <div class="card-desc">从1到20的数字挑战</div>
+                </a>
+                <a href="color.html" class="card">
+                    <span class="card-emoji">🎨</span>
+                    <div class="card-title">颜色乐园</div>
+                    <div class="card-desc">五彩缤纷的颜色世界</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- 动物世界 -->
+        <div class="group-section">
+            <h2 class="group-title">🐾 动物世界</h2>
+            <div class="cards-scroll">
+                <a href="animal.html" class="card">
+                    <span class="card-emoji">🐾</span>
+                    <div class="card-title">动物单词</div>
+                    <div class="card-desc">认识可爱的动物朋友们</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- 生活日常 -->
+        <div class="group-section">
+            <h2 class="group-title">🍎 生活日常</h2>
+            <div class="cards-scroll">
+                <a href="fruit.html" class="card">
+                    <span class="card-emoji">🍎</span>
+                    <div class="card-title">水果单词</div>
+                    <div class="card-desc">好吃的水果英文名</div>
+                </a>
+                <a href="#" class="card" onclick="showComingSoon(event)">
+                    <span class="card-emoji">🍽️</span>
+                    <div class="card-title">食物单词</div>
+                    <div class="card-desc">各种美食的英文名称</div>
+                </a>
+                <a href="#" class="card" onclick="showComingSoon(event)">
+                    <span class="card-emoji">👔</span>
+                    <div class="card-title">衣服单词</div>
+                    <div class="card-desc">服装词汇大集合</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- 认识自己 -->
+        <div class="group-section">
+            <h2 class="group-title">👤 认识自己</h2>
+            <div class="cards-scroll">
+                <a href="#" class="card" onclick="showComingSoon(event)">
+                    <span class="card-emoji">👂</span>
+                    <div class="card-title">身体部位</div>
+                    <div class="card-desc">从头到脚的单词学习</div>
+                </a>
+                <a href="#" class="card" onclick="showComingSoon(event)">
+                    <span class="card-emoji">👨‍👩‍👧</span>
+                    <div class="card-title">家庭成员</div>
+                    <div class="card-desc">学会称呼家人们</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- 品牌落款 -->
+        <footer class="footer">
+            <p class="footer-brand">清班数学组小同学们研制</p>
+            <p class="footer-makers">制作：虹虹姐，刚子，Tony，雨香屁</p>
+        </footer>
+    </div>
+
+    <!-- 登录/注册弹窗 -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">欢迎来到英语启蒙乐园</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('login')">登录</button>
+                <button class="tab" onclick="switchTab('register')">注册</button>
+            </div>
+
+            <!-- 登录表单 -->
+            <div class="form-panel active" id="loginPanel">
+                <div class="form-group">
+                    <label class="form-label">用户名或手机号</label>
+                    <input type="text" class="form-input" id="loginUsername" placeholder="请输入用户名或手机号">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">密码</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="请输入密码">
+                </div>
+                <button class="submit-btn" onclick="handleLogin()">登录</button>
+                <p class="error-message" id="loginError"></p>
+            </div>
+
+            <!-- 注册表单 -->
+            <div class="form-panel" id="registerPanel">
+                <div class="form-group">
+                    <label class="form-label">昵称</label>
+                    <input type="text" class="form-input" id="registerNickname" placeholder="请输入昵称">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">手机号</label>
+                    <input type="tel" class="form-input" id="registerPhone" placeholder="请输入手机号">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">密码</label>
+                    <input type="password" class="form-input" id="registerPassword" placeholder="请输入密码">
+                </div>
+                <button class="submit-btn" onclick="handleRegister()">注册</button>
+                <p class="error-message" id="registerError"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 即将上线提示 -->
+    <div class="coming-soon-toast" id="comingSoonToast">
+        🎉 该模块即将上线，敬请期待！
+    </div>
+
+    <script>
+        // Supabase配置
+        const SUPABASE_URL = 'https://iigckwcdwclmekyxsvbj.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_AWxSEp2mc9X5FXD9y7sFjA_9GY19yrJ';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // 检查登录状态
+        function checkLoginStatus() {
+            const userInfo = localStorage.getItem('user_info');
+            if (userInfo) {
+                const user = JSON.parse(userInfo);
+                document.getElementById('loginArea').innerHTML = `
+                    <div class="user-info">
+                        <span class="user-nickname">${user.username}</span>
+                        <button class="logout-btn" onclick="handleLogout()">退出</button>
+                    </div>
+                `;
+            } else {
+                document.getElementById('loginArea').innerHTML = `
+                    <button class="login-btn" onclick="openModal()">登录</button>
+                `;
+            }
+        }
+
+        // 打开弹窗
+        function openModal() {
+            document.getElementById('authModal').classList.add('active');
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('authModal').classList.remove('active');
+            clearErrors();
+        }
+
+        // 切换Tab
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.tab');
+            const panels = document.querySelectorAll('.form-panel');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            panels.forEach(p => p.classList.remove('active'));
+
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginPanel').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('registerPanel').classList.add('active');
+            }
+            
+            clearErrors();
+        }
+
+        // 清除错误提示
+        function clearErrors() {
+            document.getElementById('loginError').textContent = '';
+            document.getElementById('loginError').classList.remove('active');
+            document.getElementById('registerError').textContent = '';
+            document.getElementById('registerError').classList.remove('active');
+        }
+
+        // 显示错误提示
+        function showError(elementId, message) {
+            const errorEl = document.getElementById(elementId);
+            errorEl.textContent = message;
+            errorEl.classList.add('active');
+        }
+
+        // 处理登录
+        async function handleLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!username || !password) {
+                showError('loginError', '请填写完整信息');
+                return;
+            }
+
+            try {
+                // 查询用户
+                const { data, error } = await supabase
+                    .from('players')
+                    .select('*')
+                    .or(`username.eq.${username},phone.eq.${username}`)
+                    .eq('password', password)
+                    .single();
+
+                if (error) {
+                    showError('loginError', '用户名或密码错误');
+                    return;
+                }
+
+                if (!data) {
+                    showError('loginError', '用户名或密码错误');
+                    return;
+                }
+
+                // 保存用户信息
+                const userInfo = {
+                    username: data.username || data.phone,
+                    phone: data.phone,
+                    player_id: data.id
+                };
+                localStorage.setItem('user_info', JSON.stringify(userInfo));
+
+                // 更新UI
+                checkLoginStatus();
+                closeModal();
+
+            } catch (err) {
+                console.error('登录错误:', err);
+                showError('loginError', '登录失败，请稍后重试');
+            }
+        }
+
+        // 处理注册
+        async function handleRegister() {
+            const nickname = document.getElementById('registerNickname').value.trim();
+            const phone = document.getElementById('registerPhone').value.trim();
+            const password = document.getElementById('registerPassword').value;
+
+            if (!nickname || !phone || !password) {
+                showError('registerError', '请填写完整信息');
+                return;
+            }
+
+            // 简单的手机号验证
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                showError('registerError', '请输入正确的手机号');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError('registerError', '密码至少6位');
+                return;
+            }
+
+            try {
+                // 检查手机号是否已注册
+                const { data: existingUser } = await supabase
+                    .from('players')
+                    .select('id')
+                    .eq('phone', phone)
+                    .single();
+
+                if (existingUser) {
+                    showError('registerError', '该手机号已注册');
+                    return;
+                }
+
+                // 创建用户
+                const { data, error } = await supabase
+                    .from('players')
+                    .insert([
+                        {
+                            username: nickname,
+                            phone: phone,
+                            password: password,
+                            grade: 1,
+                            vip_expire: null
+                        }
+                    ])
+                    .select()
+                    .single();
+
+                if (error) {
+                    showError('registerError', '注册失败，请稍后重试');
+                    return;
+                }
+
+                // 保存用户信息
+                const userInfo = {
+                    username: data.username,
+                    phone: data.phone,
+                    player_id: data.id
+                };
+                localStorage.setItem('user_info', JSON.stringify(userInfo));
+
+                // 更新UI
+                checkLoginStatus();
+                closeModal();
+
+            } catch (err) {
+                console.error('注册错误:', err);
+                showError('registerError', '注册失败，请稍后重试');
+            }
+        }
+
+        // 处理退出
+        function handleLogout() {
+            localStorage.removeItem('user_info');
+            checkLoginStatus();
+        }
+
+        // 显示即将上线提示
+        function showComingSoon(event) {
+            event.preventDefault();
+            const toast = document.getElementById('comingSoonToast');
+            toast.classList.add('active');
+            
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 2000);
+        }
+
+        // 点击弹窗外部关闭
+        document.getElementById('authModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // 初始化
+        checkLoginStatus();
+    </script>
+</body>
+</html>
